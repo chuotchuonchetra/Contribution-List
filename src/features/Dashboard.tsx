@@ -1,24 +1,33 @@
-import ContributionList from "./ContributionList";
-
+import ContributionList, { type IGuest } from "./ContributionList";
+import ContributionStats from "./ContributionStats";
+import { useAppSelector } from "../store/store";
 export const Dashboard = () => {
+  const contributions = useAppSelector((state) => state.contribution.items);
+  console.log(contributions);
+  const totals = contributions.reduce(
+    (acc: { usd: number; khr: number }, item: IGuest) => {
+      if (item.currencyType === "USD") {
+        acc.usd += item.amount;
+      } else if (item.currencyType === "KHR") {
+        acc.khr += item.amount;
+      }
+      return acc;
+    },
+    { usd: 0, khr: 0 }
+  );
+
   return (
-    <main className="p-6 space-y-6 overflow-y-auto h-[calc(100vh-64px)]">
+    <main className="p-6 space-y-6  min-h-[calc(100vh-64px)] ">
       {/* 1. Summary Cards */}
-      {/* <ContributionStats /> */}
+      <ContributionStats
+        guestCount={contributions.length}
+        totalKHR={totals.khr}
+        totalUSD={totals.usd}
+      />
 
-      <div className="grid grid-cols-1 gap-6">
-        {/* 2. Fast Entry Form */}
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800">
-          <h2 className="text-sm font-bold mb-4 dark:text-white">
-            បញ្ចូលទិន្នន័យថ្មី (New Entry)
-          </h2>
-          {/* <ContributionForm /> */}
-        </div>
-
-        {/* 3. The Main Table */}
-        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800">
-          <ContributionList />
-        </div>
+      {/* 3. The Main Table */}
+      <div className="">
+        <ContributionList />
       </div>
     </main>
   );

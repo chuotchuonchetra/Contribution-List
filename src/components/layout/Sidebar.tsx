@@ -6,10 +6,10 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
-
+import "../../App.css";
 const Sidebar = () => {
   return (
-    <aside className="w-74 bg-white border-r border-gray-200 h-[calc(100vh-64px)] sticky top-16 hidden lg:flex flex-col">
+    <aside className="w-74 khmer-regular bg-white border-r border-gray-200 h-[calc(100vh-64px)] sticky top-16 hidden lg:flex flex-col">
       <div className="p-6 flex flex-col h-full">
         {/* Navigation Section */}
         <div className="space-y-1 mb-8">

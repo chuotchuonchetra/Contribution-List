@@ -1,5 +1,10 @@
 import { Edit2, Trash2, MoreVertical, ArrowUpDown } from "lucide-react";
-// src/types/index.ts
+import Pagination from "./PaginationTable";
+import { useAppSelector } from "../store/store";
+import ModalDialog from "./ModalDialog";
+import { useState } from "react";
+import DeleteModal from "./DeleteModal";
+
 export type ContributionType = "new" | "payback" | "debt";
 
 export interface IGuest {
@@ -9,36 +14,13 @@ export interface IGuest {
   type: ContributionType;
   note: string;
   date: string;
+  currencyType: string;
 }
-const ContributionList = () => {
-  // Mock data - eventually this will come from your Redux state (useSelector)
-  const contributions: IGuest[] = [
-    {
-      id: "1",
-      name: "សុខា មាស",
-      amount: 50,
-      type: "payback",
-      note: "សងកាលការកូនស្រី",
-      date: "2023-10-24",
-    },
-    {
-      id: "2",
-      name: "វណ្ណាក់ ឡុង",
-      amount: 20,
-      type: "debt",
-      note: "ជំពាក់សិន",
-      date: "2023-10-25",
-    },
-    {
-      id: "3",
-      name: "ចាន់ ណារី",
-      amount: 100,
-      type: "new",
-      note: "ចងដៃថ្មី",
-      date: "2023-10-25",
-    },
-  ];
 
+const ContributionList = () => {
+  const contributions: IGuest[] = useAppSelector(
+    (state) => state.contribution.items
+  );
   const getStatusStyle = (type: string) => {
     switch (type) {
       case "payback":
@@ -61,9 +43,29 @@ const ContributionList = () => {
     }
   };
 
+  type ModalType = "edit" | "delete" | null;
+  type FilterGuestType = "all" | "debt" | "payback";
+  const [modal, setModal] = useState<{
+    type: ModalType;
+    guest: IGuest | null;
+  }>({
+    type: null,
+    guest: null,
+  });
+
+  const [selectedGuest, setSelectedGuest] = useState<IGuest>({
+    amount: 0,
+    currencyType: "",
+    date: "",
+    id: "",
+    name: "",
+    note: "",
+    type: "new",
+  });
+
   return (
-    <div className="overflow-x-auto p-6 space-y-6 overflow-y-auto h-[calc(100vh-64px)] bg-white ">
-      <table className="w-full text-left border-collapse shadow-sm">
+    <div className="relative p-6 space-y-6 h-[calc(75vh-64px)] bg-white shadow-sm ">
+      <table className="w-full text-left border-collapse shadow-sm ">
         {/* Table Header */}
         <thead className="bg-gray-50 dark:bg-slate-800/50 border-b border-gray-200 dark:border-slate-800">
           <tr>
@@ -82,7 +84,7 @@ const ContributionList = () => {
               ចំណាំ (Note)
             </th>
             <th className="p-4 text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider text-right">
-              សកម្មភាព
+              សកម្មភាព (Actions)
             </th>
           </tr>
         </thead>
@@ -99,7 +101,8 @@ const ContributionList = () => {
                 </div>
               </td>
               <td className="p-4 text-gray-700 dark:text-slate-300 font-semibold">
-                ${item.amount.toLocaleString()}
+                {item.amount.toLocaleString()}{" "}
+                {item.currencyType == "USD" ? "ដុល្លា" : "រៀល"}
               </td>
               <td className="p-4">
                 <span
@@ -120,10 +123,28 @@ const ContributionList = () => {
              This keeps the buttons there (taking up space) 
              so the table width doesn't change on hover.
           */}
-                  <button className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-all opacity-0 group-hover:opacity-100">
-                    <Edit2 size={16} />
-                  </button>
-                  <button className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all opacity-0 group-hover:opacity-100">
+                  <div>
+                    <button
+                      className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                      onClick={() => {
+                        setSelectedGuest(item);
+                        setModal({
+                          guest: item,
+                          type: "edit",
+                        });
+                      }}>
+                      <Edit2 size={16} />
+                    </button>
+                  </div>
+                  <button
+                    className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                    onClick={() => {
+                      setSelectedGuest(item);
+                      setModal({
+                        guest: item,
+                        type: "delete",
+                      });
+                    }}>
                     <Trash2 size={16} />
                   </button>
 
@@ -137,8 +158,22 @@ const ContributionList = () => {
           ))}
         </tbody>
       </table>
-
-      {/* Empty State Illustration would go here if contributions.length === 0 */}
+      <Pagination />
+      {modal.type === "edit" && modal.guest && (
+        <ModalDialog
+          openModal={true}
+          onClose={() => setModal({ type: null, guest: null })}
+          guestSelected={modal.guest}
+          formAction={true}
+        />
+      )}
+      {modal.type === "delete" && modal.guest && (
+        <DeleteModal
+          guestSelected={selectedGuest}
+          onClose={() => setModal({ type: null, guest: null })}
+          openModal={true}
+        />
+      )}
     </div>
   );
 };

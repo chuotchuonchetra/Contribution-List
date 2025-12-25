@@ -1,7 +1,5 @@
 @import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:opsz,wght@14..32,100..900&family=Khmer&display=swap");
-.khmer-regular {
-  font-family: "Khmer", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
+@import url("https://fonts.googleapis.com/css2?family=Khmer&display=swap");
+/* * {
+  font-family: "Khmer", serif;
+} */

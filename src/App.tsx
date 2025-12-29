@@ -6,6 +6,8 @@ import { Dashboard } from "./features/Dashboard";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import GuestList from "./features/GuestList";
+import DebtGuest from "./features/DebtGuest";
+import PaybackGuest from "./features/PaybackGuest";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
                 />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/guests" element={<GuestList />} />
+                <Route path="/debtguests" element={<DebtGuest />} />
+                <Route path="/paybackguests" element={<PaybackGuest />} />
                 <Route
                   path="/settings"
                   element={<div className="p-6">Settings Page</div>}

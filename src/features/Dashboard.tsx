@@ -27,7 +27,7 @@ export const Dashboard = () => {
 
       {/* 3. The Main Table */}
       <div className="">
-        <ContributionList />
+        <ContributionList filterType="all" />
       </div>
     </main>
   );

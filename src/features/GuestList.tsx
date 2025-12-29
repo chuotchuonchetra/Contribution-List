@@ -33,7 +33,7 @@ const GuestList = () => {
         }}
       />
 
-      <ContributionList />
+      <ContributionList filterType="all" />
     </div>
   );
 };
